@@ -9,6 +9,11 @@
  */
 
 /**
+ * Use this to initialyse vectors
+ */
+void 			init_vectors		();
+
+/**
  * Retourne la liste des sommets du modèle
  */
 vector_t	*	ModelVertices		();

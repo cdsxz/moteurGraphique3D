@@ -63,6 +63,12 @@ matrixf_t	MatrixfIdentity	( int n );
 matrixf_t	MatrixfMult	( matrixf_t a, matrixf_t b, int n, int m );
 
 /**
+ * Multiply un scalaire avec une matrice flottante de dimension n x m
+ */
+matrixf_t	MatrixfMultScal	( matrixf_t a, int b, int n, int m );
+
+
+/**
  * Construit une matrice viewport flottante
  */
 matrixf_t	MatrixfViewport	( int x, int y, int w, int h );
@@ -90,10 +96,25 @@ inline vec3f_t Vec3f( float x, float y, float z ) {
 }
 
 /**
+ * Construit un vecteur flottant de dimension 3 et positonne ses composantes
+ */
+inline vec2f_t Vec2f( float x, float y ) {
+	vec2f_t v; v.x = x; v.y = y;
+	return v;
+}
+
+/**
  * Positonne les composante d'un vecteur flottant de dimension 3
  */
 inline void Vec3fSet( vec3f_t * v, float x, float y, float z ) {
 	v->x = x; v->y = y; v->z = z;
+}
+
+/**
+ * Positonne les composante d'un vecteur flottant de dimension 2
+ */
+inline void Vec2fSet( vec2f_t * v, float x, float y ) {
+	v->x = x; v->y = y;
 }
 
 /**
@@ -176,5 +197,10 @@ inline matrixf_t Vec3f2Matrixf( vec3f_t v ) {
 	m[ 0 ][ 0 ] = v.x; m[ 1 ][ 0 ] = v.y; m[ 2 ][ 0 ] = v.z; m[ 3 ][ 0 ] = 1.0f;
 	return m;
 }
+
+void tri_3(int &top, int &mid, int &bot, float a, float b, float c);
+void tri_3(int top[5], int mid[5], int bot[5], int a[5], int b[5], int c[5]);
+void set(int t[5], int x, int y, int z, int tx, int ty);
+
 
 #endif //__GEOMETRY_H__
