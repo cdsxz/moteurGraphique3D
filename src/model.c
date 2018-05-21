@@ -55,7 +55,7 @@ face_t ModelGetFace( int index ) {
 
 bool ModelLoad( char * objfilename ) {
 	// TODO
-	//Open .obj
+	// Open .obj
 	FILE *fd = fopen(objfilename, "r"); 
 	if (fd == NULL){ 
         printf("Could not open the file\n");
@@ -63,7 +63,7 @@ bool ModelLoad( char * objfilename ) {
     }
     // init
 	init_vectors(); 
-	//process
+	// process
 
 	int loading = 1;
         while(loading){

@@ -62,12 +62,13 @@ void			WindowDrawPoint		( window_t * w, int x, int y, int z, Uint8 r, Uint8 g, U
  * Dessine une ligne colorée dans la fenêtre
  */
 void			WindowDrawLine		( window_t * w, int x0, int y0, int z0, int x1, int y1, int z1, Uint8 r, Uint8 g, Uint8 b );
+void 			WindowDrawHorizontalLine( window_t * w, int x0, int y0, int z0, int x1, int y1, int z1, Uint8 r, Uint8 g, Uint8 b ); 
 
 /**
  * Dessine un triangle coloré dans la fenêtre
  */
 //void			WindowDrawTriangle	( window_t * w, int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, Uint8 r, Uint8 g, Uint8 b);
-void WindowDrawTriangle( window_t * w, int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, Uint8 r, Uint8 g, Uint8 b, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3);
+void WindowDrawTriangle( window_t * w, int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, Uint8 r, Uint8 g, Uint8 b);
 
 
 #endif //__WINDOW_H__

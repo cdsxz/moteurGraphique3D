@@ -134,14 +134,13 @@ void WindowUpdate( window_t * w ) {
 
 void WindowDrawPoint( window_t * w, int x, int y, int z, Uint8 r, Uint8 g, Uint8 b ) 
 {
-	// Fonction à implementer
-	//Handle out-of-window displaying
+	// Handle out-of-window displaying
 	if (x < 0 || x > w->width || y < 0 || y > w->height)
 		return;
-	//Depth checks
-	//Too close or too far
+	// Depth checks
+	// Too close or too far
 	if (z > MIN_DEEP || z < MAX_DEEP + (int)w->zBuffer[x + y * w->width]) return; 
-	//Update Z-Buffer
+	// Update Z-Buffer
 	w->zBuffer[x + y * w->width] = z - MAX_DEEP;
 	// Update pixel value
 	w->framebuffer[(w->width - x)*4 + (w->height - 1 - y) * w->width*4] = (unsigned char) b;
@@ -164,7 +163,6 @@ void WindowDrawLine( window_t * w, int x0, int y0, int z0, int x1, int y1, int z
 	float coef_zx = 0, coef_zy = 0;
 	float s_x = (x1 - x0) < 0 ? -1 : 1;
 	float s_y = (y1 - y0) < 0 ? -1 : 1;
-	float s_z = (z1 - z0) < 0 ? -1 : 1;
 
 	// Handle limit condition
 	if (x1 == x0 && y1 == y0) {
@@ -173,60 +171,58 @@ void WindowDrawLine( window_t * w, int x0, int y0, int z0, int x1, int y1, int z
 	}
 
 	if (x1 == x0) {
-		coef_zy = fabs((float)(z1 - z0) / (float)(y1 - y0));
 		for (int i = y0; i <= y1; i++)
-			WindowDrawPoint(w, x0, i, z0 + s_z * (i-y0) * coef_zy, r, g, b);
+			WindowDrawPoint(w, x0, i, (z0 + z1)/2, r, g, b);
 		for (int i = y1; i <= y0; i++)
-			WindowDrawPoint(w, x0, i, z0 + s_z * (i-y1) * coef_zy, r, g, b);
+			WindowDrawPoint(w, x0, i, (z0 + z1)/2, r, g, b);
 		return;
 	}
 	
 	if (y1 == y0) {
-		coef_zx = fabs((float)(z1 - z0) / (float)(x1 - x0));
 		for (int i = x0; i <= x1 ; i++)
-			WindowDrawPoint(w, i, y0, z0 + s_z * (i-x0) * coef_zx, r, g, b);
+			WindowDrawPoint(w, i, y0, (z0 + z1)/2, r, g, b);
 		for (int i = x1; i <= x0 ; i++)
-			WindowDrawPoint(w, i, y0, z0 + s_z * (i-x1) * coef_zx, r, g, b);
+			WindowDrawPoint(w, i, y0, (z0 + z1)/2, r, g, b);
 		return;
 	}
 
 	// Calcul coef
 	float coef = fabs((float)(y1 - y0) / (float)(x1 - x0));
-	coef_zx = fabs((float)(z1 - z0) / (float)(x1 - x0));
-	coef_zy = fabs((float)(z1 - z0) / (float)(y1 - y0));
 
 	// Process
-	float x = x0, y = y0, z = z0;
+	float x = x0, y = y0;
 	while ((x != x1) && (y != y1)) {
 		if (coef == 1) {
 			x += s_x; 
 			y += s_y;
-			z += s_z * coef_zy;
 		} else if (coef < 1) {
 			x += s_x;
 			y += s_y * coef;
-			z += s_z * coef_zx;
 		} else {
 			y += s_y;
 			x += s_x / coef;
-			z += s_z * coef_zy;
 		}
-		WindowDrawPoint(w, (int)x, (int)y, (int)z, r, g, b);
+		WindowDrawPoint(w, (int)x, (int)y, (int)(z0 + z1)/2, r, g, b);
 	}
 }
 
-
-void WindowDrawTriangle( window_t * w, int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, Uint8 r, Uint8 g, Uint8 b, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3) 
+void WindowDrawHorizontalLine( window_t * w, int x0, int y0, int z0, int x1, int y1, int z1, Uint8 r, Uint8 g, Uint8 b ) 
 { 
-	//line sweeping
+	float coef_zy = (float)(z1 - z0) / (float)(y1 - y0);
+	for (int i = y0; i <= y1; i++)
+		WindowDrawPoint(w, x0, i, (z0 + z1)/2, r, g, b);
+	for (int i = y1; i <= y0; i++)
+		WindowDrawPoint(w, x0, i, (z0 + z1)/2, r, g, b);
+	return;
+}
+
+
+void WindowDrawTriangle( window_t * w, int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, Uint8 r, Uint8 g, Uint8 b) 
+{ 
+	// line sweeping
 	vec3f_t* p = (vec3f_t*) malloc(3 * sizeof(vec3f_t));
 	vec3f_t* n = (vec3f_t*) malloc(3 * sizeof(vec3f_t));
 	vec2f_t* t = (vec2f_t*) malloc(3 * sizeof(vec2f_t));
-
-	int p1[5], p2[5], p3[5];
-	set(p1, x1, y1, z1, tx1, ty1);
-	set(p2, x2, y2, z2, tx2, ty2);
-	set(p3, x3, y3, z3, tx3, ty3);
 
 	p[0] = Vec3f(x1, y1, z1);
 	p[1] = Vec3f(x2, y2, z2);
@@ -239,7 +235,7 @@ void WindowDrawTriangle( window_t * w, int x1, int y1, int z1, int x2, int y2, i
 
 	int i_top = 0, i_mid = 1, i_bot = 2;
 	tri_3(i_top, i_mid, i_bot, p[0].y, p[1].y, p[2].y);
-	//tri_3(top, mid, bot, p1, p2, p3);
+
 	top[0] = p[i_top].x;
 	top[1] = p[i_top].y;
 	top[2] = p[i_top].z;
@@ -283,7 +279,6 @@ void WindowDrawTriangle( window_t * w, int x1, int y1, int z1, int x2, int y2, i
 	// Drawing
 	for (int i = bot[1]; i < top[1]; i++)
 	{
-		//WindowDrawLine(w, l_lim[0], i, l_lim[1], r_lim[0], i, r_lim[1], r, g, b);
 		for (int j = l_lim[0]; j <= r_lim[0]; j++)
 			WindowDrawPoint(w, j, i, (l_lim[1] + r_lim[1])/2, r, g, b);
 		for (int j = r_lim[0]; j <= l_lim[0]; j++)
